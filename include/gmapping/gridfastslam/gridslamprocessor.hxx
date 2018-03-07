@@ -148,7 +148,7 @@ inline bool GridSlamProcessor::resample(const double* plainReading, int adaptSiz
     hasResampled = true;
   } else {
     int index=0;
-    std::cerr << "Registering Scans:";
+    std::cerr << "Registering Scans (using AA274 minRange hack):";
     TNodeVector::iterator node_it=oldGeneration.begin();
     for (ParticleVector::iterator it=m_particles.begin(); it!=m_particles.end(); it++){
       //create a new node in the particle tree and add it to the old tree

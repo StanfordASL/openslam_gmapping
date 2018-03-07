@@ -227,20 +227,23 @@ double ScanMatcher::registerScan(ScanMatcherMap& map, const OrientedPoint& p, co
 	
 	
 	const double * angle=m_laserAngles+m_initialBeamsSkip;
+	const double minRange = 0.5;
 	double esum=0;
 	for (const double* r=readings+m_initialBeamsSkip; r<readings+m_laserBeams; r++, angle++)
 		if (m_generateMap){
 			double d=*r;
-			if (d>m_laserMaxRange||d==0.0||isnan(d))
+			if (d>m_laserMaxRange||d==0.0||isnan(d)||d<=minRange)
 				continue;
 			if (d>m_usableRange)
 				d=m_usableRange;
+			Point pstart=lp+Point(minRange*cos(lp.theta+*angle),minRange*sin(lp.theta+*angle));
 			Point phit=lp+Point(d*cos(lp.theta+*angle),d*sin(lp.theta+*angle));
+			IntPoint ps=map.world2map(pstart);
 			IntPoint p1=map.world2map(phit);
 			//IntPoint linePoints[20000] ;
 			GridLineTraversalLine line;
 			line.points=m_linePoints;
-			GridLineTraversal::gridLine(p0, p1, &line);
+			GridLineTraversal::gridLine(ps, p1, &line);
 			for (int i=0; i<line.num_points-1; i++){
 				PointAccumulator& cell=map.cell(line.points[i]);
 				double e=-cell.entropy();
